@@ -50,3 +50,6 @@ def int_check(question, low=None, high=None):
 # main routine
 
 lowest = int_check("low number: ")
+highest = int_check("Higher Number: ", lowest + 1)
+rounds = int_check("Rounds: ", 1)
+guess = int_check("Guess: ", lowest, highest)
