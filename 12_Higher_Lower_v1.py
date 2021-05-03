@@ -1,10 +1,11 @@
 
 import math
 import random
-# Functions 
+# Functions
+# Check for amount of rounds and if give value is within correct responses 
 def check_rounds():
     while True:
-       response = input("How many rounds? ")
+       response = input("Rounds: ")
 
        round_error = "Please type either <enter> " \
                     "or an integer that is more than 0"
@@ -36,7 +37,7 @@ def instructions():
     print("***** Have Fun! *****")
     print()
     return ""
-# Yes / no
+# Yes / no to see whether yes / no is valid
 def yes_no(question):
     valid = False
     while not valid:
@@ -52,7 +53,7 @@ def yes_no(question):
 
         else:
             print("Please answer yes / no")
-# Integer Checker
+# Integer Checker 
 def int_check(question, low=None, high=None):
 
     situation = ""
@@ -100,7 +101,9 @@ if played_before == "no":
     instructions()
 # Set up game parameters (range, number of numbers)
 low = int(input("Low number: "))   # uses int input in due course
+print()
 high = int_check("High number: ", low + 1)  # use int check in due course
+print()
 
 # works out number of guesses
 num_range = high - low + 1
@@ -108,15 +111,23 @@ max_raw = math.log2(num_range) # finds maximum # of guesses using binear search 
 max_upped = math.ceil(max_raw) # rounds up (ceil --> ceiling)
 max_guesses = max_upped + 1
 print("Max Guesses: {}".format(max_guesses))
+print()
 
 # Rounds
-
+rounds = check_rounds()
 rounds_lost = 0
 rounds_won = 0
 rounds_played = rounds_won + rounds_lost
+
+
 # Rounds Heading
-rounds = int_check("Rounds: ", 1)
+# rounds = input("Rounds: ")
+print()
 # Continuous rounds heading
+
+if rounds != "" and rounds_played == rounds - 1:
+  end_game = "yes"
+
 if rounds == "":
     heading = "Continuous Mode: Round {}".format(rounds_played + 1)
     print(heading)
@@ -144,6 +155,7 @@ for item in range(0, rounds):
   while guess != secret and guesses_left >= 1:
 
     guess = int_check("Guess: ", low, high)
+    print()
 
 
     # checks that guess is not a duplicate
@@ -159,22 +171,27 @@ for item in range(0, rounds):
 
         if guess < secret:
             print("Too low, try a higher number. Guesses left: {} ".format(guesses_left))
+            print()
             
         elif guess > secret:
             print("Too high, try a lower number. Guesses left: {} ".format(guesses_left))
+            print()
     else:
         if guess < secret:
             print("Too Low!")
+            print()
         elif guess > secret: 
             print("Too High!")
+            print()
 
     if guess == secret:
           print("Amazing! You got it ")
     elif guess == secret:
         print("Well done, you got it ")
    # What was the number : 
-    if guesses_left <= 0:
-      print("You have no more guesses left, the secret was", secret)
+    if guess != secret and guesses_left <= 0:
+     print("You have no more guesses left, the secret was", secret)
+     print()
         
         
 # End Summary
@@ -183,4 +200,4 @@ for item in range(0, rounds):
 
 # Game summary
 
-# Number of Guesses :
+
