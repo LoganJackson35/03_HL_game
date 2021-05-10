@@ -1,27 +1,10 @@
-
+# Proper H / L Game
 import math
 import random
 # Functions
+
 # Check for amount of rounds and if give value is within correct responses 
-def check_rounds():
-    while True:
-       response = input("Rounds: ")
 
-       round_error = "Please type either <enter> " \
-                    "or an integer that is more than 0"
-       if response != "":
-           try:
-              response = int(response)
-
-              if response < 1:
-                  print(round_error)
-                  continue
-
-           except ValueError:
-              print(round_error)
-              continue
-  
-       return response
 
 # Instructions
 def instructions():
@@ -37,6 +20,7 @@ def instructions():
     print("***** Have Fun! *****")
     print()
     return ""
+
 # Yes / no to see whether yes / no is valid
 def yes_no(question):
     valid = False
@@ -53,58 +37,72 @@ def yes_no(question):
 
         else:
             print("Please answer yes / no")
+
 # Integer Checker 
-def int_check(question, low=None, high=None):
+def int_check(question, low=None, high=None, exit_code=None):
+
+    
+  valid = False
+  while not valid:
+    response = input(question).lower()
+    exit_code = "xxx"
+
+    if exit_code == "xxx" and response == "xxx":
+      return response
+    elif exit_code == "xxx" and response == "":
+      return response
 
     situation = ""
 
     if low is not None and high is not None:
-        situation = "both"
+      situation = "both"
     elif low is not None and high is None:
-        situation = "low only"
+      situation = "low only"
 
-    while True:
+    try:
+      response = int(response)
 
-        try:
-            response = int(input(question))
+      # checks input is not top high
+      # too low if a both upper and lower bounds 
+      # are specified
+      if situation == "both":
+        if response < low or response > high:
+          print("Please enter a number between "
+          "{} and {}".format(low, high))
+          continue
+      # checks input is not too low
+      elif situation == "low only":
+        if response < low:
+          print("Please enter an number that is more "
+          "than (or equal to) {}".format(low))
+          continue
 
-            # checks input is not top high
-            # too low if a both upper and lower bounds 
-            # are specified
-            if situation == "both":
-                if response < low or response > high:
-                    print("Please enter a number between "
-                          "{} and {}".format(low, high))
-                    continue
-            # checks input is not too low
-            elif situation == "low only":
-                if response < low:
-                    print("Please enter an number that is more "
-                          "than (or equal to) {}".format(low))
-                    continue
+      return response
 
-            return response
-        
-        # checks input is a integer  
-        except ValueError:
-            print("Please enter an integer") 
-            continue   
+    # checks input is a integer  
+    except ValueError:
+      print("Please enter an integer") 
+      continue   
                       
 # main routine
+
 # Yes/No List
-yes_no_list = ["yes", "no"]
+yes_no_list = ["yes", "no", "xxx"]
 # Played Before?
 played_before = yes_no("Have you played before? ")
 print()
 
 if played_before == "no":
     instructions()
+
+
 # Set up game parameters (range, number of numbers)
-low = int(input("Low number: "))   # uses int input in due course
+low = int_check("Low number: ")  # uses int input in due course
 print()
 high = int_check("High number: ", low + 1)  # use int check in due course
 print()
-
+rounds = int_check("Rounds: ", 0, exit_code="xxx")
+print()
 # works out number of guesses
 num_range = high - low + 1
 max_raw = math.log2(num_range) # finds maximum # of guesses using binear search method 
@@ -114,36 +112,30 @@ print("Max Guesses: {}".format(max_guesses))
 print()
 
 # Rounds
-rounds = check_rounds()
 rounds_lost = 0
 rounds_won = 0
-rounds_played = rounds_won + rounds_lost
+rounds_played = 0
 
 
-# Rounds Heading
-# rounds = input("Rounds: ")
-print()
-# Continuous rounds heading
+keep_going = "yes"
 
-if rounds != "" and rounds_played == rounds - 1:
-  end_game = "yes"
+while keep_going == "yes":
 
-if rounds == "":
+  if keep_going == "no":
+    break
+  # Rounds Heading:
+  if rounds == "":
     heading = "Continuous Mode: Round {}".format(rounds_played + 1)
     print(heading)
   # Specific number of rounds heading
-else:
-  heading = "Round {} of  {}".format(rounds_played + 1, rounds)
-  print(heading)
-  # choose = "Round {}: {}".format(rounds)
-
-
-# H/L Integer
-
-for item in range(0, rounds):
+  else:
+    heading = "Round {} of  {}".format(rounds_played + 1, rounds) 
+    # print(heading)
 
   secret = random.randint(low, high)
+  print()
   print("Spoiler alert, the secret is", secret)
+  print()
   guesses_allowed = max_guesses
 
   already_guessed = []
@@ -154,15 +146,30 @@ for item in range(0, rounds):
   
   while guess != secret and guesses_left >= 1:
 
-    guess = int_check("Guess: ", low, high)
+    guess = int_check("Guess: ", low, high, "xxx")
+    
     print()
+    if guess == "xxx":
+       keep_going = "no"
+       print("you asked to quit")
+       break
 
+    else:
+      print("You guessed", guess)
+      print()
 
     # checks that guess is not a duplicate
     if guess in already_guessed:
         print("You already guessed that number! Please try again "
               "You *still* have {} guesses left".format(guesses_left))
         continue
+
+
+    # stops rounds: from continuous
+    if guess == secret:
+      rounds_played += 1
+    if rounds_played == rounds:
+      keep_going = "no"
 
     guesses_left -= 1
     already_guessed.append(guess)
@@ -186,18 +193,21 @@ for item in range(0, rounds):
 
     if guess == secret:
           print("Amazing! You got it ")
+          
     elif guess == secret:
         print("Well done, you got it ")
    # What was the number : 
     if guess != secret and guesses_left <= 0:
      print("You have no more guesses left, the secret was", secret)
      print()
+
         
         
-# End Summary
 
 
+# Notes:
 
-# Game summary
-
-
+# Implement Continuous Mode
+# Implement Game Stats and End Game Summary
+# Add Statement Generator
+# Fix Round
